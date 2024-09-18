@@ -5,6 +5,7 @@ import {
     getAuth,
     signInWithEmailAndPassword
  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+ import { getFirestore,doc,getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,6 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
+const db = getFirestore();
 
 // Getting ids
 let email = document.getElementById('lemail')
@@ -36,9 +38,17 @@ window.login = () => {
         password: password.value,
     }
     signInWithEmailAndPassword(auth, obj.email, obj.password)
-    .then((res) => {
+    .then(async (res) => {
+
     console.log(res);
+
+    let id = res.user.uid;
+    let reference = doc(db, "Users", id)
     
+    const user = await getDoc(reference);
+    if (user.exists()) {
+      console.log(user.data());
+    }
      })
     .catch((err) => { 
 alert("YOu Make Some KiNd Of MisTaKe")

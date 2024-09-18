@@ -32,22 +32,32 @@ let password = document.getElementById('password')
 let fullName = document.getElementById('fullName')
 
 
-window.signUp = ()=> {
+window.signUp = () => {
     let obj = {
         email: email.value,
         password: password.value,
         fullName: fullName.value,
     }
     console.log(obj);
-    
+
     createUserWithEmailAndPassword(auth, obj.email, obj.password)
         .then((res) => {
-            console.log(res);
-            // let refrence = res.user.uid;
-            // await setDoc(doc(db , "USERS",refrence))
-            
-            
-            // window.location.href = "login.html"
+            console.log(res); //Confirm the login
+            let refrence = res.user.uid;
+            obj.id = refrence // give uid in obj
+            const ref = doc(db, "Users", refrence)
+            setDoc(ref , obj)
+            .then(() => {
+                console.log(obj);
+
+            })
+            .catch((dbErr) => {
+                console.log(dbErr);
+            })
+            setTimeout(changePg,5000)
+            function changePg() {
+                window.location.href = "login.html"
+            }
         })
         .catch((err) => {
             alert("YOu Make Some KiNd Of MisTaKe")
